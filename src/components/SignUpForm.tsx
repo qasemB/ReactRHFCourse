@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
+import FormField from "./FormField";
 
 interface SignUpFormData {
   name: string;
@@ -11,7 +12,9 @@ interface SignUpFormData {
 export default function SignUpForm () {
   const [ showPassword, setShowPassword ] = useState( false );
 
-  const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>()
+  const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>({
+    shouldFocusError: true
+  })
 
   const onSubmit = ( data: SignUpFormData ) => {
     console.log( data );
@@ -41,8 +44,10 @@ export default function SignUpForm () {
 
           <form className="space-y-5" onSubmit={ handleSubmit( onSubmit ) }>
             {/* name */ }
-            <div>
-              <label className="block text-sm text-slate-300 mb-1.5">Full name</label>
+            <FormField
+              label="Full name"
+              error={ errors.name?.message }
+            >
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500" />
                 <input
@@ -62,8 +67,8 @@ export default function SignUpForm () {
                   className="w-full bg-slate-950/60 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-slate-100 placeholder:text-slate-600 text-sm outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
                 />
               </div>
-              { errors.name && <p className="text-red-400">{ errors.name.message }</p> }
-            </div>
+            </FormField>
+
 
             {/* email */ }
             <div>
