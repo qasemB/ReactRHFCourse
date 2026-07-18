@@ -12,11 +12,12 @@ interface SignUpFormData {
 export default function SignUpForm () {
   const [ showPassword, setShowPassword ] = useState( false );
 
-  const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>({
-    shouldFocusError: true
-  })
+  const { register, handleSubmit, formState: { errors }, reset, resetField } = useForm<SignUpFormData>( {
+    shouldFocusError: true,
+  } )
 
   const onSubmit = ( data: SignUpFormData ) => {
+    resetField("name")
     console.log( data );
   };
 
