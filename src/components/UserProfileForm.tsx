@@ -32,11 +32,15 @@ export default function UserProfileForm () {
         register,
         handleSubmit,
         formState: { errors },
+        watch
     } = useForm<UserProfileFormData>();
 
     const onSubmit = ( data: UserProfileFormData ) => {
         console.log( data );
     };
+
+    const terms = watch("terms")
+    
 
     return (
         <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center p-6">
@@ -243,7 +247,8 @@ export default function UserProfileForm () {
 
                         <button
                             type="submit"
-                            className="w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98]"
+                            className={`w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] ${!terms && "opacity-50 pointer-events-none"}`}
+                            disabled={!terms}
                         >
                             Create Profile
                             <ArrowRight className="w-4 h-4" />
