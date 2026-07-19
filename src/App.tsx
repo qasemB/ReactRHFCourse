@@ -1,8 +1,10 @@
-import SignUpForm from "./components/SignUpForm"
+// import SignUpForm from "./components/SignUpForm"
+import UserProfileForm from "./components/UserProfileForm"
 
 function App () {
   return (
-    <SignUpForm />
+    // <SignUpForm />
+    <UserProfileForm />
   )
 }
 
