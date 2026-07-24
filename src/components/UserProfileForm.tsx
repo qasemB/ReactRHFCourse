@@ -10,7 +10,7 @@ import {
     FileText,
     ArrowRight,
 } from "lucide-react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import FormField from "./FormField";
 
 interface UserProfileFormData {
@@ -38,7 +38,7 @@ export default function UserProfileForm () {
         watch,
         control
     } = useForm<UserProfileFormData>( {
-        // defaultValues: { phoneNumbers: [] }
+        defaultValues: { phoneNumbers: [ { number: "" } ] }
     } );
 
     const {
@@ -59,8 +59,8 @@ export default function UserProfileForm () {
 
     const terms = watch( "terms" )
 
-    console.log(errors);
-    
+    console.log( errors );
+
 
 
     return (
@@ -92,11 +92,21 @@ export default function UserProfileForm () {
                         <FormField label="Full Name" error={ errors.name?.message }>
                             <div className="relative">
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                                <input
-                                    type="text"
-                                    { ...register( "name" ) }
-                                    placeholder="John Doe"
-                                    className="w-full bg-slate-950/60 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+
+                                <Controller
+                                    name="name"
+                                    control={ control }
+                                    render={ ( { field } ) => (
+                                        <input
+                                            type="text"
+                                            { ...field }
+                                            onChange={ ( e ) => {
+                                                field.onChange( e.target.value.toUpperCase() );
+                                            } }
+                                            placeholder="John Doe"
+                                            className="w-full bg-slate-950/60 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                                        />
+                                    ) }
                                 />
                             </div>
                         </FormField>
