@@ -10,7 +10,7 @@ import {
     FileText,
     ArrowRight,
 } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import FormField from "./FormField";
 
 interface UserProfileFormData {
@@ -23,6 +23,9 @@ interface UserProfileFormData {
     skills: string[];
     biography: string;
     terms: boolean;
+    phoneNumbers: {
+        number: string;
+    }[];
 }
 
 export default function UserProfileForm () {
@@ -32,15 +35,33 @@ export default function UserProfileForm () {
         register,
         handleSubmit,
         formState: { errors },
-        watch
-    } = useForm<UserProfileFormData>();
+        watch,
+        control
+    } = useForm<UserProfileFormData>( {
+        // defaultValues: { phoneNumbers: [] }
+    } );
+
+    const {
+        fields,
+        append,
+        remove,
+    } = useFieldArray( {
+        control,
+        name: "phoneNumbers",
+        rules: {
+            required: "At least one phone number is required.",
+        },
+    } );
 
     const onSubmit = ( data: UserProfileFormData ) => {
         console.log( data );
     };
 
-    const terms = watch("terms")
+    const terms = watch( "terms" )
+
+    console.log(errors);
     
+
 
     return (
         <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center p-6">
@@ -217,6 +238,43 @@ export default function UserProfileForm () {
                             </div>
                         </FormField>
 
+                        {/* Phone Numbers */ }
+                        <FormField label="Phone Numbers" error={ errors.phoneNumbers?.root?.message }>
+                            <div className="space-y-3">
+                                { fields.map( ( field, index ) => (
+                                    <FormField key={ field.id } label="" error={ errors.phoneNumbers?.[ index ]?.number?.message }>
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                { ...register( `phoneNumbers.${ index }.number`, { required: "Phone number is required." } ) }
+                                                placeholder="Phone Number"
+                                                className="flex-1 bg-slate-950/60 border border-slate-700 rounded-xl py-3 px-4 text-slate-100 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                                            />
+
+                                            <button
+                                                type="button"
+                                                onClick={ () => remove( index ) }
+                                                className="px-4 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </FormField>
+                                ) ) }
+
+                                <button
+                                    type="button"
+                                    onClick={ () =>
+                                        append( {
+                                            number: "",
+                                        } )
+                                    }
+                                    className="w-full rounded-xl border border-dashed border-rose-400 text-rose-400 py-3 hover:bg-rose-400/10 transition"
+                                >
+                                    + Add Phone Number
+                                </button>
+                            </div>
+                        </FormField>
+
                         {/* Biography */ }
                         <FormField label="Biography" error={ errors.biography?.message }>
                             <div className="relative">
@@ -247,8 +305,8 @@ export default function UserProfileForm () {
 
                         <button
                             type="submit"
-                            className={`w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] ${!terms && "opacity-50 pointer-events-none"}`}
-                            disabled={!terms}
+                            className={ `w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] ${ !terms && "opacity-50 pointer-events-none" }` }
+                            disabled={ !terms }
                         >
                             Create Profile
                             <ArrowRight className="w-4 h-4" />
