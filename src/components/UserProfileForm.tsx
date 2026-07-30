@@ -72,15 +72,16 @@ type UserProfileFormData = z.infer<typeof userProfileSchema>;
 export default function UserProfileForm () {
     const [ showPassword, setShowPassword ] = useState( false );
 
+
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
         watch,
         control,
         reset
     } = useForm<UserProfileFormData>( {
-        defaultValues: { phoneNumbers: [ { number: ""} ], name: "" },
+        defaultValues: { phoneNumbers: [ { number: "" } ], name: "" },
         resolver: zodResolver( userProfileSchema )
     } );
 
@@ -93,8 +94,19 @@ export default function UserProfileForm () {
         name: "phoneNumbers",
     } );
 
-    const onSubmit = ( data: UserProfileFormData ) => {
-        console.log( data );
+    const saveUser = ( data: UserProfileFormData ) => {
+        return new Promise( ( resolve ) => {
+            setTimeout( () => {
+                resolve( data );
+                // reject( new Error( "Something went wrong." ) );
+            }, 2000 );
+        } );
+    };
+
+    const onSubmit = async ( data: UserProfileFormData ) => {
+
+        await saveUser(data)
+
     };
 
     const terms = watch( "terms" )
@@ -102,7 +114,7 @@ export default function UserProfileForm () {
     const loadUser = async () => {
         const response = await fetch( "/user.json" );
         const data = await response.json();
-        reset(data)
+        reset( data )
     };
 
     useEffect( () => {
@@ -343,8 +355,8 @@ export default function UserProfileForm () {
 
                         <button
                             type="submit"
-                            className={ `w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] ${ !terms && "opacity-50 pointer-events-none" }` }
-                            disabled={ !terms }
+                            className={ `w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] ${ (!terms || isSubmitting) && "opacity-50 pointer-events-none" }` }
+                            disabled={ !terms || isSubmitting }
                         >
                             Create Profile
                             <ArrowRight className="w-4 h-4" />
