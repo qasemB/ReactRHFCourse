@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     User,
     Mail,
@@ -23,12 +23,12 @@ const userProfileSchema = z.object( {
     email: z.email( "Please enter a valid email address." ),
 
     password: z
-    .string()
-    .min( 8, "Password must be at least 8 characters." )
-    .refine(
-        (value) => !value.includes(" "),
-        {message: "Password must not contain spaces.",}
-    ),
+        .string()
+        .min( 8, "Password must be at least 8 characters." )
+        .refine(
+            ( value ) => !value.includes( " " ),
+            { message: "Password must not contain spaces.", }
+        ),
 
     age: z.number()
         .min( 18, "You must be at least 18 years old." )
@@ -77,10 +77,11 @@ export default function UserProfileForm () {
         handleSubmit,
         formState: { errors },
         watch,
-        control
+        control,
+        reset
     } = useForm<UserProfileFormData>( {
-        defaultValues: { phoneNumbers: [ { number: "" } ] },
-        resolver: zodResolver(userProfileSchema)
+        defaultValues: { phoneNumbers: [ { number: ""} ], name: "" },
+        resolver: zodResolver( userProfileSchema )
     } );
 
     const {
@@ -98,7 +99,15 @@ export default function UserProfileForm () {
 
     const terms = watch( "terms" )
 
-    console.log( errors );
+    const loadUser = async () => {
+        const response = await fetch( "/user.json" );
+        const data = await response.json();
+        reset(data)
+    };
+
+    useEffect( () => {
+        loadUser();
+    }, [] );
 
 
 
@@ -201,7 +210,7 @@ export default function UserProfileForm () {
                             <div className="relative">
                                 <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
                                 <select
-                                    { ...register( "country") }
+                                    { ...register( "country" ) }
                                     defaultValue=""
                                     className="w-full appearance-none bg-slate-950/60 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-slate-100 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
                                 >
@@ -217,19 +226,6 @@ export default function UserProfileForm () {
                             </div>
                         </FormField>
 
-                        {/* <FormField label="State">
-                            <select
-                                className="w-full appearance-none bg-slate-950/60 border border-slate-700 rounded-xl py-3 px-4 text-slate-100 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
-                            >
-                                <option value="">Select a state</option>
-                                <option value="california">California</option>
-                                <option value="texas">Texas</option>
-                                <option value="florida">Florida</option>
-                                <option value="new-york">New York</option>
-                                <option value="washington">Washington</option>
-                            </select>
-                        </FormField> */}
-
                         {/* Gender */ }
                         <FormField label="Gender" error={ errors.gender?.message }>
                             <div className="grid grid-cols-2 gap-4">
@@ -237,7 +233,7 @@ export default function UserProfileForm () {
                                     <input
                                         type="radio"
                                         value="male"
-                                        { ...register( "gender") }
+                                        { ...register( "gender" ) }
                                         className="accent-rose-400"
                                     />
                                     <span className="text-slate-200">Male</span>
@@ -257,7 +253,7 @@ export default function UserProfileForm () {
                                     <input
                                         type="checkbox"
                                         value="react"
-                                        { ...register( "skills") }
+                                        { ...register( "skills" ) }
                                         className="accent-rose-400"
                                     />
                                     <span className="text-slate-200">React</span>
@@ -287,7 +283,7 @@ export default function UserProfileForm () {
                                     <FormField key={ field.id } label="" error={ errors.phoneNumbers?.[ index ]?.number?.message }>
                                         <div className="flex items-center gap-2">
                                             <input
-                                                { ...register( `phoneNumbers.${ index }.number`) }
+                                                { ...register( `phoneNumbers.${ index }.number` ) }
                                                 placeholder="Phone Number"
                                                 className="flex-1 bg-slate-950/60 border border-slate-700 rounded-xl py-3 px-4 text-slate-100 outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
                                             />
