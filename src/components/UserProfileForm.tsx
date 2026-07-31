@@ -79,7 +79,12 @@ export default function UserProfileForm () {
         formState: { errors, isSubmitting },
         watch,
         control,
-        reset
+        reset,
+        // setValue,
+        // getValues,
+        // trigger,
+        // clearErrors,
+        setError
     } = useForm<UserProfileFormData>( {
         defaultValues: { phoneNumbers: [ { number: "" } ], name: "" },
         resolver: zodResolver( userProfileSchema )
@@ -105,7 +110,7 @@ export default function UserProfileForm () {
 
     const onSubmit = async ( data: UserProfileFormData ) => {
 
-        await saveUser(data)
+        await saveUser( data )
 
     };
 
@@ -128,7 +133,7 @@ export default function UserProfileForm () {
             <div className="w-full max-w-2xl">
                 {/* Brand */ }
                 <div className="flex items-center justify-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-radial-to-br from-rose-400 to-amber-300 flex items-center justify-center font-bold text-slate-900">
+                    <div className="w-10 h-10 rounded-xl bg-radial-to-br from-rose-400 to-amber-300 flex items-center justify-center font-bold text-white">
                         A
                     </div>
 
@@ -137,6 +142,15 @@ export default function UserProfileForm () {
                         <p className="text-slate-500 text-sm">Complete your profile</p>
                     </div>
                 </div>
+
+                <button
+                    className={ `w-full mt-2 bg-linear-to-r from-sky-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] mb-4` }
+                    onClick={()=>{
+                        console.log(setError("name", {message: "Test Error"}));                        
+                    }}
+                >
+                    Click Me
+                </button>
 
                 {/* Card */ }
                 <div className="relative bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl shadow-black/40">
@@ -355,7 +369,7 @@ export default function UserProfileForm () {
 
                         <button
                             type="submit"
-                            className={ `w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] ${ (!terms || isSubmitting) && "opacity-50 pointer-events-none" }` }
+                            className={ `w-full mt-2 bg-linear-to-r from-rose-400 to-amber-300 text-slate-900 font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition hover:brightness-105 active:scale-[0.98] ${ ( !terms || isSubmitting ) && "opacity-50 pointer-events-none" }` }
                             disabled={ !terms || isSubmitting }
                         >
                             Create Profile
